@@ -2,15 +2,37 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Debug = UnityEngine.Debug;
 
 public class Tester : MonoBehaviour
 {
+
+    [SerializeField] private TextMeshProUGUI _originalText;
+    [SerializeField] private TextMeshProUGUI _noDoubleText;
+    [SerializeField] private TextMeshProUGUI _doubleText;
     // Start is called before the first frame update
     void Start()
     {
+        
+
+
+
+    }
+
+    public void PressButton()
+    {
+        Debug.Log("Button pressed");
+        //Task task = Task.Factory.StartNew(() => DoTest());
+        DoTest();
+    }
+
+    public void DoTest()
+    {
+        Debug.Log("Test started");
         MoveSearcherOriginal moveSearcherOriginal = new MoveSearcherOriginal();
         MoveSearcherWorking moveSearcherWorking = new MoveSearcherWorking();
 
@@ -44,6 +66,7 @@ public class Tester : MonoBehaviour
 
 
         // First the original.
+        
         stopwatch.Start();
         uint originalTotalNodes = 0;
         int originalTotalEvaluation = 0;
@@ -55,9 +78,12 @@ public class Tester : MonoBehaviour
             (move, nodes, eval) = moveSearcherOriginal.StartSearch(boardToTestArray[i], scoreToTestArray[i], depth);
             originalTotalEvaluation += eval;
             originalTotalNodes += nodes;
+            
         }
         stopwatch.Stop();
         TimeSpan timeOriginal = stopwatch.Elapsed;
+        _originalText.text = $"Original time: {timeOriginal.Seconds}s, {timeOriginal.Milliseconds}ms.";
+        Debug.Log($"Original:\n" + $"Total Evaluation: {originalTotalEvaluation}, Total nodes {originalTotalNodes}, Time taken: {timeOriginal.Seconds}s, {timeOriginal.Milliseconds}ms");
         stopwatch.Reset();
 
         // Then the working, no double threading.
@@ -75,6 +101,8 @@ public class Tester : MonoBehaviour
         }
         stopwatch.Stop();
         TimeSpan timeWorkingNoDouble = stopwatch.Elapsed;
+        _noDoubleText.text = $"No Double time: {timeWorkingNoDouble.Seconds}s, {timeWorkingNoDouble.Milliseconds}ms.";
+        Debug.Log($"Working no double threading:\n" + $"Total Evaluation: {workingNoDoubleEvaluation}, Total nodes {workingNoDoubleTotalNodes}, Time taken: {timeWorkingNoDouble.Seconds}s, {timeWorkingNoDouble.Milliseconds}ms.");
         stopwatch.Reset();
 
         // Then the working, double threading.
@@ -92,16 +120,19 @@ public class Tester : MonoBehaviour
         }
         stopwatch.Stop();
         TimeSpan timeWorkingDouble = stopwatch.Elapsed;
+        _doubleText.text = $"Double time: {timeWorkingDouble.Seconds}s, {timeWorkingDouble.Milliseconds}ms.";
+        Debug.Log($"Working double threading:\n" + $"Total Evaluation: {workingDoubleEvaluation}, Total nodes {workingDoubleTotalNodes}, Time taken: {timeWorkingDouble.Seconds}s, {timeWorkingDouble.Milliseconds}ms.");
         stopwatch.Reset();
 
-        Debug.Log($"Original:\n" + $"Total Evaluation: {originalTotalEvaluation}, Total nodes {originalTotalNodes}, Time taken: {timeOriginal.Seconds}s, {timeOriginal.Milliseconds}ms");
-        Debug.Log($"Working no double threading:\n" + $"Total Evaluation: {workingNoDoubleEvaluation}, Total nodes {workingNoDoubleTotalNodes}, Time taken: {timeWorkingNoDouble.Seconds}s, {timeWorkingNoDouble.Milliseconds}ms.");
-        Debug.Log($"Working double threading:\n" + $"Total Evaluation: {workingDoubleEvaluation}, Total nodes {workingDoubleTotalNodes}, Time taken: {timeWorkingDouble.Seconds}s, {timeWorkingDouble.Milliseconds}ms.");
+        
 
+        
 
-
+        
 
     }
 
-    
+
+
+
 }
